@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heart Waves</title>
+<link rel="stylesheet" href="shared/style.css">
+<script type="importmap">{ "imports": { "three": "./shared/vendor/three.module.js", "three/addons/": "./shared/vendor/addons/" } }</script>
+</head>
+<body>
+<header>
+  <h1>Heart waves: electricity that behaves like a fluid</h1>
+  <span class="tags">excitable medium · re-entry · spiral waves · phase singularities · resonant feedback pacing · defibrillation · pseudo-ECG</span>
+</header>
+<main>
+  <div id="stage"><div class="hud" id="hud"></div><div class="hint">Drag on the sheet = use your tool (default: fire cells) · drag outside the sheet or pick "camera" to orbit · wheel = zoom · height = voltage · violet underneath = battery still recharging · rings/trails = spiral tips (red ↻, blue ↺) · frame flashes red during a global pulse</div></div>
+  <aside>
+    <h2>Play</h2>
+    <div id="knobs"></div>
+    <div id="plot"></div>
+
+    <details open>
+      <summary>Analogy</summary>
+      <p><b>Dominoes that stand themselves back up.</b> Nothing flows from one end of the heart to the other. Each cell is a
+      <b>battery</b> charged by ion pumps (sodium out, potassium in, about −85 mV inside). When a neighbour's charge leaks in
+      and pushes it past a threshold, sodium gates snap open and the cell <span class="gold">fires</span>. That pushes its own
+      neighbours over, and so on. Afterwards it needs time to recharge (<span style="color:#c792ea">violet</span>): during that
+      <b>refractory</b> rest it cannot fire again, like burnt forest that has to regrow before it can burn again.</p>
+      <p>That rest is why waves only move forward and why two waves that meet annihilate: each runs into the other's ashes.
+      It is also what makes spirals possible. If a wave front gets broken, its free end curls into tissue that has just recovered,
+      then keeps chasing its own tail. That's <b>re-entry</b>, the engine behind many dangerous arrhythmias.</p>
+    </details>
+
+    <details>
+      <summary>The math</summary>
+      <p>Aliev–Panfilov, the same equations as <code>heart/sim.py</code>:</p>
+      <div class="math">∂u/∂t = D ∇²u            <span class="muted">← charge leaks to neighbours (conduction)</span>
+       − k·u(u−a)(u−1)     <span class="gold">← the battery: below a → fall back; above a → shoot to 1</span>
+       − u·v               <span style="color:#c792ea">← recovery pulls voltage down</span>
+∂v/∂t = (ε₀ + μ₁v/(u+μ₂))·(−v − k·u(u−a−1))   <span style="color:#c792ea">← slow recharge = rest period</span></div>
+      <p>Conduction alone (first term) would just blur a spark until it vanished. The cubic term turns blur into a
+      <b>travelling wave</b> that keeps its full height, because every cell re-amplifies it. Units: 1 t.u. ≈ 12.9 ms, V = 100·u − 80 mV.
+      Scar cells are holes: no current crosses their border.</p>
+      <p>Spiral tips are <b>phase singularities</b>: around the tip, the angle θ = atan2(v − ½, u − ½) turns a full 2π,
+      like the hands of a clock. Only the tip itself has no defined phase. The sign of that turn is the spiral's
+      <b>topological charge</b>: <span class="red">−1 = clockwise ↻</span>, <span class="blue">+1 = counter-clockwise ↺</span>.
+      Charge is conserved: tips are born in ± pairs (a figure-8) and can only vanish by meeting their opposite or by leaving through the edge.</p>
+      <p>The ECG is what a distant electrode sees: φ = Σ ∇u · ∇(1/r). Moving fronts, not resting cells, make the signal.</p>
+    </details>
+
+    <details open>
+      <summary>Gentle feedback pacing (Roshan &amp; Majumder 2025)</summary>
+      <p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12672457/" target="_blank">Roshan &amp; Majumder, <i>Termination of figure-of-eight
+      reentry via resonant feedback pacing</i>, Front. Netw. Physiol. 2025</a> (Fenton–Karma model, 768² grid).</p>
+      <p><b>Analogy: pushing a swing.</b> A defibrillator is a huge shove: everything fires at once. Instead, one sensor listens at a
+      single spot, and each time a wave passes it, the device sends a <i>weak</i> pulse to the whole sheet, below what can fire
+      even one resting cell. Because the pulse always arrives at the same phase of the spiral's own rotation, the small pushes add up
+      (resonance) and the tip <b>drifts</b>. A lone spiral starts circling the sensor (a flower-shaped epicycloid). In a figure-8, the two
+      opposite tips either collide and cancel (+1 −1 = 0), or are pushed apart into the edges.</p>
+      <div class="math">rule:  u_sensor crosses 0.5 upward  →  I(t) = 0.66·I_threshold for 1 t.u. on every cell
+model: ∂u/∂t = … + I(t)</div>
+      <p>Checked in node with this page's own model (figure-8 started with S2 at 45 t.u., pacing switched on at 5 s):</p>
+      <ul>
+        <li><b>No pacing:</b> still spinning after 46 s.</li>
+        <li><b>Timed by feedback</b> (sensor in the centre or in any of the 4 quadrants): stopped in 2–4.4 s (8 pulses with the sensor in the centre). Energy ≈ 0.11, peak 66 % of threshold.</li>
+        <li><b>Same pulses, untimed</b> (every 390 ms): the figure-8 is still spinning. <i>The timing is the medicine, not the energy.</i></li>
+        <li><b>⚡ Defibrillate</b> here = one pulse at 556 % of threshold: energy 2.0, about 18× more and 8× harder at peak.</li>
+        <li><b>A single spiral</b> with the sensor in the centre is <i>not</i> killed: it orbits the sensor, as in the paper's Fig. 2C. Move the sensor off-centre and the orbit drags the tip into the edge.</li>
+        <li><b>4 spirals:</b> feedback stopped them in 1.3 s. Honest caveat: untimed pulses also stopped them (3.3 s) in this small sheet.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>The code</summary>
+      <pre class="code">// one explicit-Euler step for one healthy cell i (core.js)
+let lap = 0;                              // only living neighbours
+if (tissue[i-1]) lap += u[i-1] - u[i];    // …same for i+1, i-n, i+n
+du[i] = D/dx² * lap
+      - k * u[i] * (u[i]-a) * (u[i]-1)    // the battery
+      - u[i] * v[i];
+v[i] += dt * (eps0 + mu1*v[i]/(u[i]+mu2))
+           * (-v[i] - k*u[i]*(u[i]-a-1)); // recharge
+u[i] += dt * du[i];</pre>
+      <pre class="code">// feedback pacing (core.js FeedbackPacer), every step
+if (mode === 'feedback' && prev &lt; 0.5 && uSensor >= 0.5) until = t + 1.0;
+prev = uSensor;
+T.I = t &lt; until ? 0.66 * 0.18 : 0;        // 0.18 = whole-sheet firing threshold
+energy += T.I * T.I * dt;</pre>
+      <p>160×160 cells, dt = 0.04, about 0.2 ms per step in the browser.</p>
+    </details>
+
+    <details open>
+      <summary>Where this comes from</summary>
+      <ul>
+        <li><a href="https://github.com/edgarmoreaualix/heart-waves" target="_blank">github.com/edgarmoreaualix/heart-waves</a>: <code>sim.py</code> is the numpy original (200² grid, with fibrosis mask + pseudo-ECG). This page reproduces its numbers: spiral ≈ 138 bpm here vs 136 there.</li>
+        <li><a href="https://huggingface.co/datasets/Ethgar/cardiac-ep-2d" target="_blank">Ethgar/cardiac-ep-2d</a>: 2,000 runs of exactly these S1/S2 + scar experiments, in The Well format. Its labels ("sustained re-entry", vulnerable window 774–903 ms) are what you are triggering by hand.</li>
+        <li><a href="https://huggingface.co/Ethgar/walrus-heart" target="_blank">Ethgar/walrus-heart</a>: the Walrus physics foundation model fine-tuned to predict the next frame of this sheet. Its long rollouts break into stripes after ~0.5 s. Watch here how sharp the real fronts stay: that sharpness is what a model has to keep.</li>
+      </ul>
+    </details>
+
+    <details open>
+      <summary>Try this</summary>
+      <ol>
+        <li><b>Make a spiral by hand.</b> Turn the pacemaker off, then click near the left edge once. While the wave crosses the middle, drag a line <i>right behind</i> its violet tail. The new wave can only go one way, so its ends curl into two counter-rotating spirals (a figure-8).</li>
+        <li><b>Miss the window.</b> Same, but draw your line far behind the tail (the sheet is dark again). It just makes a normal second wave. Draw it inside the tail: nothing happens, the cells are still recharging.</li>
+        <li><b>Feedback pacing.</b> Press "Figure-8" and wait for the two tips (one red, one blue) to settle into circles. Then set pacing to <i>timed by feedback</i>. Watch the trails bend, the tips drift, and the figure-8 die after a handful of red flashes on the frame. Compare the energy meter with ⚡.</li>
+        <li><b>Is it the timing?</b> Same figure-8, but <i>untimed</i>. Same pulses, same strength, and it keeps spinning.</li>
+        <li><b>Orbit the sensor.</b> "Spiral ↻" + feedback with the cyan sensor in the middle: the trail turns into a flower around the sensor. Pick the probe tool and move the sensor near an edge: the spiral is dragged along and dies on the edge.</li>
+        <li><b>Strength.</b> Push pulse strength past 100 %: each pulse now fires the whole sheet (a mini-shock). At 20 % nothing much happens: the swing needs pushes that are big enough.</li>
+        <li><b>Defibrillate.</b> With spirals running, press ⚡. Every cell fires at once, so every cell is resting at once, and no wave has anywhere to go. Silence, then the pacemaker takes over again.</li>
+        <li><b>A loop around a scar.</b> Press "Scar loop". A line is fired just below the scar, while the tissue on one side is still recharging, so the wave can only leave one way. It goes around the scar and keeps circling. No gold ring appears: the scar <i>is</i> the tip. The rate (≈ 68 bpm at the probe) is set by the loop's length, so a bigger scar gives a slower loop. This is how tachycardia after a heart attack works. ⚡ stops it. The timing window is only a few ms wide, so it's a preset, not something you can easily do by hand.</li>
+        <li><b>Fast battery.</b> Raise ε₀: the rest gets shorter, the wave gets shorter, spirals get tighter and faster, and break up more easily.</li>
+      </ol>
+    </details>
+  </aside>
+</main>
+<script type="module" src="main.js"></script>
+</body>
+</html>

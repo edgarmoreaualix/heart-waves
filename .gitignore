@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+story.npz
+walrus/gt_cache/
+walrus/meta_cache/
+walrus/results/*/rollouts_video.npz
+walrus/results/*/rollouts_per_traj.json
+/heart_spiral.*
+/walrus_heart.*
