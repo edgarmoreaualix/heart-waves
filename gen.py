@@ -9,7 +9,7 @@ site, optional premature S2 cross-field stimulus. Batched on GPU with torch (one
 Fields (t0): voltage (u, 0 rest .. 1 firing; V_mV = 100u - 80), recovery (v), conductivity (time-constant map).
 Sidecar: meta/trajectories.parquet with parameters, labels (sustained re-entry, dominant rate) and 3 pseudo-ECG leads.
 
-usage: uv run gen.py --n 2000 --out /tmp/heart [--repo Ethgar/cardiac-ep-2d] [--batch 250]
+usage: uv run gen.py --n 2000 --out /tmp/heart [--repo edgarmoreau/cardiac-ep-2d] [--batch 250]
 """
 import argparse, json, math, time
 from pathlib import Path

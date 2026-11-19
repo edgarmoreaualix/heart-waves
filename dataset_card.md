@@ -16,8 +16,8 @@ size_categories:
 
 # Cardiac Electrophysiology 2D
 
-▶ Play with the physics in your browser: [Ethgar/heart-waves](https://huggingface.co/spaces/Ethgar/heart-waves) ·
-🧠 Walrus fine-tuned on it: [Ethgar/walrus-heart](https://huggingface.co/Ethgar/walrus-heart) ·
+▶ Play with the physics in your browser: [edgarmoreau/heart-waves](https://huggingface.co/spaces/edgarmoreau/heart-waves) ·
+🧠 Walrus fine-tuned on it: [edgarmoreau/walrus-heart](https://huggingface.co/edgarmoreau/walrus-heart) ·
 💻 Code: [github.com/edgarmoreaualix/heart-waves](https://github.com/edgarmoreaualix/heart-waves)
 
 2,000 simulations of electrical waves in a 2D sheet of heart tissue, including **normal paced beats**, **premature beats**,

@@ -5,7 +5,7 @@
 """Recompute The Well-style stats.yaml (mean/std/rms + mean_delta/rms_delta) over the train split, in float64."""
 import glob, math, yaml, numpy as np, h5py
 from huggingface_hub import snapshot_download, HfApi
-REPO = "Ethgar/cardiac-ep-2d"
+REPO = "edgarmoreau/cardiac-ep-2d"
 root = snapshot_download(REPO, repo_type="dataset", allow_patterns=["data/train/*"], max_workers=16)
 acc = {k: np.zeros(5) for k in ("voltage", "recovery", "conductivity")}  # n, s, s2, nd, sd, (sd2 separately)
 sd2 = {k: 0.0 for k in acc}

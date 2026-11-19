@@ -6,7 +6,7 @@
 # ]
 # ///
 """Walrus-Heart: fine-tune Walrus (1.3B, polymathic-ai/walrus) vs the same architecture from scratch on the
-cardiac EP dataset Ethgar/cardiac-ep-2d (2D Aliev-Panfilov, The Well format).
+cardiac EP dataset edgarmoreau/cardiac-ep-2d (2D Aliev-Panfilov, The Well format).
 
     hf jobs uv run --flavor a100-large --secrets HF_TOKEN --timeout 3h -e MODE=train -e INIT=pretrained ... walrus_heart.py
 
@@ -38,7 +38,7 @@ WARM = int(E("WARMUP", "100")); VAL_EVERY = int(E("VAL_EVERY", "250")); GC = int
 N_ROLL = int(E("N_ROLL", "48")); ROLL_B = int(E("ROLL_B", "16")); MAX_MIN = float(E("MAX_TRAIN_MIN", "150"))
 RUN = E("RUN", f"{INIT}_n{NTRAIN}")
 VIDEO_IDS = [int(x) for x in E("VIDEO_IDS", "19,679,1209,29,449,1129,279,1949,1599,509,139,1309").split(",")]
-DATA, MODEL_REPO, RUNS_REPO = "Ethgar/cardiac-ep-2d", "Ethgar/walrus-heart", "Ethgar/frontier-runs"
+DATA, MODEL_REPO, RUNS_REPO = "edgarmoreau/cardiac-ep-2d", "edgarmoreau/walrus-heart", "edgarmoreau/frontier-runs"
 LOCAL = MODE == "local"
 EPS = 1e-5; STIM_DUR = 1.0; DT_FRAME = 3.0; NT = 161
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")

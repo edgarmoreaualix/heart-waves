@@ -6,9 +6,9 @@ look at the physics with your own eyes, and try to tame an arrhythmia.
 
 | | |
 |---|---|
-| ▶ **Play with it** | [huggingface.co/spaces/Ethgar/heart-waves](https://huggingface.co/spaces/Ethgar/heart-waves) (runs in the browser, no install) |
-| 📦 **Dataset** | [Ethgar/cardiac-ep-2d](https://huggingface.co/datasets/Ethgar/cardiac-ep-2d): 2,000 simulations, The Well format, CC BY 4.0 |
-| 🧠 **Model** | [Ethgar/walrus-heart](https://huggingface.co/Ethgar/walrus-heart): Walrus 1.3B fine-tuned + from-scratch baseline |
+| ▶ **Play with it** | [huggingface.co/spaces/edgarmoreau/heart-waves](https://huggingface.co/spaces/edgarmoreau/heart-waves) (runs in the browser, no install) |
+| 📦 **Dataset** | [edgarmoreau/cardiac-ep-2d](https://huggingface.co/datasets/edgarmoreau/cardiac-ep-2d): 2,000 simulations, The Well format, CC BY 4.0 |
+| 🧠 **Model** | [edgarmoreau/walrus-heart](https://huggingface.co/edgarmoreau/walrus-heart): Walrus 1.3B fine-tuned + from-scratch baseline |
 
 ![spiral wave](media/heart_spiral.png)
 
@@ -34,7 +34,7 @@ ventricular tachycardia and fibrillation.
 An S1 plane wave from the left, then a premature S2 beat in the **vulnerable window** (50–65 time units after the wave,
 ≈ 650–840 ms), breaks the front into a spiral that spins at ≈ 136 bpm. 1 time unit ≈ 12.9 ms. `render.py` makes the video in `media/`.
 
-### 2. Built an open dataset: [Ethgar/cardiac-ep-2d](https://huggingface.co/datasets/Ethgar/cardiac-ep-2d)
+### 2. Built an open dataset: [edgarmoreau/cardiac-ep-2d](https://huggingface.co/datasets/edgarmoreau/cardiac-ep-2d)
 `gen.py` batches the same physics in PyTorch on one GPU (~15 min on an A10G for 2,000 runs):
 
 - 128 × 128 sheet, 161 frames (≈ 6.2 s of heart time), fields `voltage`, `recovery`, `conductivity`
@@ -45,7 +45,7 @@ An S1 plane wave from the left, then a premature S2 beat in the **vulnerable win
 Stored in [The Well](https://github.com/PolymathicAI/the_well) HDF5 format, so physics foundation models can use it directly.
 `stats_job.py` recomputes normalisation stats in float64 (an fp16 sum overflowed the first time).
 
-### 3. Fine-tuned Walrus: [Ethgar/walrus-heart](https://huggingface.co/Ethgar/walrus-heart)
+### 3. Fine-tuned Walrus: [edgarmoreau/walrus-heart](https://huggingface.co/edgarmoreau/walrus-heart)
 `walrus/walrus_heart.py` fine-tunes [polymathic-ai/walrus](https://huggingface.co/polymathic-ai/walrus) (1.3 B parameters, pretrained on
 The Well, including Gray–Scott reaction-diffusion) and trains the **same architecture from scratch** as a control.
 1,200 steps, batch 2, lr 1e-4, one A100 per run (~1.6 h each, ~5.4 A100-hours in total), run with `hf jobs`.
@@ -73,7 +73,7 @@ Test set, predicting the next frame (VRMSE, lower is better; 800 windows):
 
 ### 4. Saw the physics, and tried to tame an arrhythmia
 `study/` is a self-contained browser playground (three.js, no build step, also the
-[Space](https://huggingface.co/spaces/Ethgar/heart-waves)): the same model on a 160² sheet that you can poke.
+[Space](https://huggingface.co/spaces/edgarmoreau/heart-waves)): the same model on a 160² sheet that you can poke.
 Fire cells with the mouse, paint scars, break a wave into spirals, defibrillate, and listen to a virtual ECG.
 
 It also implements **resonant feedback pacing** from

@@ -93,8 +93,8 @@ energy += T.I * T.I * dt;</pre>
       <summary>Where this comes from</summary>
       <ul>
         <li><a href="https://github.com/edgarmoreaualix/heart-waves" target="_blank">github.com/edgarmoreaualix/heart-waves</a>: <code>sim.py</code> is the numpy original (200² grid, with fibrosis mask + pseudo-ECG). This page reproduces its numbers: spiral ≈ 138 bpm here vs 136 there.</li>
-        <li><a href="https://huggingface.co/datasets/Ethgar/cardiac-ep-2d" target="_blank">Ethgar/cardiac-ep-2d</a>: 2,000 runs of exactly these S1/S2 + scar experiments, in The Well format. Its labels ("sustained re-entry", vulnerable window 774–903 ms) are what you are triggering by hand.</li>
-        <li><a href="https://huggingface.co/Ethgar/walrus-heart" target="_blank">Ethgar/walrus-heart</a>: the Walrus physics foundation model fine-tuned to predict the next frame of this sheet. Its long rollouts break into stripes after ~0.5 s. Watch here how sharp the real fronts stay: that sharpness is what a model has to keep.</li>
+        <li><a href="https://huggingface.co/datasets/edgarmoreau/cardiac-ep-2d" target="_blank">edgarmoreau/cardiac-ep-2d</a>: 2,000 runs of exactly these S1/S2 + scar experiments, in The Well format. Its labels ("sustained re-entry", vulnerable window 774–903 ms) are what you are triggering by hand.</li>
+        <li><a href="https://huggingface.co/edgarmoreau/walrus-heart" target="_blank">edgarmoreau/walrus-heart</a>: the Walrus physics foundation model fine-tuned to predict the next frame of this sheet. Its long rollouts break into stripes after ~0.5 s. Watch here how sharp the real fronts stay: that sharpness is what a model has to keep.</li>
       </ul>
     </details>
 
